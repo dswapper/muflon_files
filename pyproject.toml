@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "muflon_files"
+version = "0.1.0"
+description = "Telegram Bot for muflonize messages."
+authors = ["dswp <dr.swaper@ya.ru>"]
+license = "MIT License"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+aiogram = "^3.24.0"
+pydantic-settings = "^2.12.0"
+loguru = "^0.7.3"
+watchgod = "^0.8.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "8.3.4"
+pytest-asyncio = "0.23.8"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
