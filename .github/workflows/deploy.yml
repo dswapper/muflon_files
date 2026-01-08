@@ -1,0 +1,48 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        run: |
+          docker build -t ${{ vars.GHCR_IMAGE }}:latest .
+          docker tag ${{ vars.GHCR_IMAGE }}:latest ${{ vars.GHCR_IMAGE }}:${{ github.sha }}
+          docker push ${{ vars.GHCR_IMAGE }}:latest
+          docker push ${{ vars.GHCR_IMAGE }}:${{ github.sha }}
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ vars.GHCR_IMAGE }}:latest
+            docker stop muflon_tg_bot || true
+            docker rm muflon_tg_bot || true
+            docker run -d \
+              --name muflon_tg_bot \
+              --restart unless-stopped \
+              -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} \
+              ${{ vars.GHCR_IMAGE }}:latest
