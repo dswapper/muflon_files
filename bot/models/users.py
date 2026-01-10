@@ -2,6 +2,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relationship
 
 from bot.db import Base
+from bot.models.mixins import ReprMixin
 
 user_roles = sa.Table(
     "user_roles",
@@ -11,7 +12,7 @@ user_roles = sa.Table(
 )
 
 
-class User(Base):
+class User(Base, ReprMixin):
     __tablename__ = "users"
 
     id = sa.Column(sa.Integer(), primary_key=True)
