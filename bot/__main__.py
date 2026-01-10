@@ -1,15 +1,27 @@
 import asyncio
+
+from redis.asyncio import Redis
 from loguru import logger
 from aiogram import Bot, Dispatcher
-from bot.config import BOT_TOKEN, DEBUG
+from aiogram.fsm.storage.redis import RedisStorage
+from bot.config import BOT_TOKEN, DEBUG, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 from bot.handlers import muflonize
 from bot.middlewares.logging_middleware import LoggingMiddleware
 from watchgod import run_process
 
 
 async def main():
+    redis = Redis(
+        host=REDIS_HOST,
+        port=REDIS_PORT,
+        password=REDIS_PASSWORD,
+        db=0,
+    )
+
+    storage = RedisStorage(redis)
+
     bot = Bot(token=BOT_TOKEN)
-    dp = Dispatcher()
+    dp = Dispatcher(storage=storage)
 
     dp.message.middleware(LoggingMiddleware())
 
@@ -21,6 +33,7 @@ async def main():
     finally:
         logger.info("Bot is stopped!")
         await bot.session.close()
+        await storage.close()
 
 
 def start_bot():
