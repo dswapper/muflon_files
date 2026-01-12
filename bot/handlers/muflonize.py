@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from bot.config import MUFFLON_PATTERN
+from bot.filters.muflonize import MufflonFilter
 from bot.services.muflonize import muflonize
 
 router = Router()
@@ -26,8 +27,7 @@ async def muflonize_handler(message: Message):
         await message.answer("Для работы этой команды надо переслать сообщение.")
 
 
-@router.message()
-async def message_handler(message: Message):
-    if MUFFLON_PATTERN.search(message.text):
-        response = muflonize(message.text)
-        await message.reply(response)
+@router.message(MufflonFilter())
+async def message_with_muflon_handler(message: Message):
+    response = muflonize(message.text)
+    await message.reply(response)
