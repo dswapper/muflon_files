@@ -15,10 +15,5 @@ metadata = Base.metadata
 @asynccontextmanager
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
-        try:
+        async with session.begin():
             yield session
-            await session.commit()
-
-        except Exception as e:
-            await session.rollback()
-            raise e

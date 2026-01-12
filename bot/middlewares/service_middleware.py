@@ -1,7 +1,7 @@
 from typing import Any, Dict, Callable
 from aiogram import BaseMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
-from bot.container import container
+from bot.container import create_container
 from bot.services.muflon_service import MuflonService
 from bot.services.user_service import UserService
 
@@ -13,6 +13,7 @@ class ServicesMiddleware(BaseMiddleware):
         event: Any,
         data: Dict[str, Any]
     ) -> Any:
+        container = create_container()
         container.register(AsyncSession, instance=data["db"])
 
         data["user_service"]: UserService = container.resolve(UserService)
