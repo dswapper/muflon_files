@@ -17,7 +17,7 @@ class User(Base, ReprMixin):
 
     id = sa.Column(sa.Integer(), primary_key=True)
     tg_id = sa.Column(sa.Integer(), unique=True)
-    roles = relationship("Role", secondary=user_roles, back_populates="users")
+    roles = relationship("Role", secondary=user_roles, back_populates="users", lazy='selectin')
 
     def has_role(self, role_name: str) -> bool:
         return any(role.name == role_name for role in self.roles)

@@ -5,13 +5,13 @@ from loguru import logger
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 from bot.config import BOT_TOKEN, DEBUG, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
+from bot.db import get_session
 from bot.handlers import muflonize, user, exception
 from watchgod import run_process
 
+from bot.middlewares.db_session_middleware import DbSessionMiddleware
 from bot.middlewares.logging_middleware import LoggingMiddleware
 from bot.middlewares.service_middleware import ServicesMiddleware
-
-from bot.services.user_service import UserService
 
 
 async def main():
@@ -27,17 +27,12 @@ async def main():
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher(storage=storage)
 
-    services = {
-        'user_service': UserService(),
-    }
-
     dp.message.middleware(LoggingMiddleware())
-    dp.message.middleware(ServicesMiddleware(services=services))
+    dp.update.outer_middleware(DbSessionMiddleware(get_session))
+    dp.update.outer_middleware(ServicesMiddleware())
 
     dp.include_router(user.router)
     dp.include_router(exception.router)
-
-    # Должен быть последним т.к. обрабатывает голые сообщения
     dp.include_router(muflonize.router)
 
     try:

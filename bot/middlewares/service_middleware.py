@@ -1,11 +1,19 @@
+from typing import Any, Dict, Callable
 from aiogram import BaseMiddleware
+from sqlalchemy.ext.asyncio import AsyncSession
+from bot.container import container
+from bot.services.user_service import UserService
 
 
 class ServicesMiddleware(BaseMiddleware):
-    def __init__(self, services: dict):
-        super().__init__()
-        self.services = services
+    async def __call__(
+        self,
+        handler: Callable[[Any, Dict[str, Any]], Any],
+        event: Any,
+        data: Dict[str, Any]
+    ) -> Any:
+        container.register(AsyncSession, instance=data["db"])
 
-    async def __call__(self, handler, event, data):
-        data.update(self.services)
+        data["user_service"]: UserService = container.resolve(UserService)
+
         return await handler(event, data)

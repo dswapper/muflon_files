@@ -14,3 +14,4 @@ async def handle_custom_exception(event: ErrorEvent, message: Message):
         text = CustomException.default_message
 
     await message.answer(text)
+    raise event.exception
