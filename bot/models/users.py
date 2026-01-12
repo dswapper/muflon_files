@@ -31,7 +31,7 @@ class User(Base, ReprMixin):
             self.roles.remove(role)
 
 
-class Role(Base):
+class Role(Base, ReprMixin):
     __tablename__ = "roles"
 
     id = sa.Column(sa.Integer(), primary_key=True)
