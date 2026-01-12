@@ -3,11 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.core.exceptions import NotFound
 from bot.models import User, Role
+from bot.services.muflon_service import MuflonService
 
 
 class UserService:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, muflon_service: MuflonService):
         self.session = session
+        self.muflon_service = muflon_service
 
     async def get_user_by_id(self, user_id: int) -> User:
         user = (await self.session.execute(select(User).where(User.id == user_id))).scalar_one_or_none()
@@ -29,10 +31,11 @@ class UserService:
 
     async def create(self, tg_id: int) -> User:
         user = User(tg_id=tg_id)
-        self.session.add(user)
-
         role = await self.get_role_by_name("user")
         user.roles.append(role)
+        self.session.add(user)
+
+        await self.muflon_service.create(user=user)
 
         await self.session.commit()
         return user
