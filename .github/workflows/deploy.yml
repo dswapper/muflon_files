@@ -33,14 +33,14 @@ jobs:
           docker push ${{ vars.GHCR_IMAGE }}:${{ github.sha }}
 
       - name: Sync project to server
-        uses: burnett01/rsync-deployments@v5
+        uses: burnett01/rsync-deployments@v8
         with:
           switches: -avz --delete
           path: ./
           remote_path: /home/${{ secrets.SSH_USER }}/muflon_bot
           remote_host: ${{ secrets.SSH_HOST }}
           remote_user: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy on server
         uses: appleboy/ssh-action@v1.0.3
@@ -64,6 +64,7 @@ jobs:
             REDIS_HOST=${{ secrets.REDIS_HOST }}
             REDIS_PORT=${{ secrets.REDIS_PORT }}
             REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            GHCR_IMAGE=${{ vars.GHCR_IMAGE }}
             EOF
 
             docker compose -f docker-compose.yml -f docker-compose.prod.yml pull

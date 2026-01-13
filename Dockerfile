@@ -20,4 +20,4 @@ COPY poetry.lock pyproject.toml ./
 RUN poetry install --no-interaction --no-cache --without dev
 COPY . /app
 
-CMD [ "poetry", "run", "python", "-m", "bot"]
+CMD ["sh", "-c", "poetry run alembic upgrade head && poetry run python -m bot"]
