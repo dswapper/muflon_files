@@ -10,7 +10,9 @@ class MuflonService:
         self.session = session
 
     async def create(self, user) -> Muflon:
-        muflon = Muflon(user=user)
+        muflon = Muflon(
+            user=user
+        )
         self.session.add(muflon)
 
         await self.session.flush()

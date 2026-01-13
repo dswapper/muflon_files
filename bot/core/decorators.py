@@ -21,3 +21,19 @@ def has_role(required_role: str):
         return wrapper
     return decorator
 
+
+def has_any_role(*required_roles: tuple[str]):
+    def decorator(handler: Callable[..., Awaitable[Any]]):
+        @wraps(handler)
+        async def wrapper(update: Union[Message, CallbackQuery], *args, **kwargs):
+            user_service: UserService = kwargs.get("user_service")
+            tg_id = update.from_user.id
+
+            user = await user_service.get_user_by_tg_id_or_create(tg_id)
+            if not user.has_any_role(required_roles):
+                raise PermissionDenied
+
+            return await handler(update, *args, **kwargs)
+        return wrapper
+    return decorator
+

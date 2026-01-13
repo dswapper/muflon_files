@@ -40,6 +40,9 @@ class User(Base, ReprMixin, TimestampMixin):
     def has_role(self, role_name: str) -> bool:
         return any(role.name == role_name for role in self.roles)
 
+    def has_any_role(self, role_names: tuple[str]) -> bool:
+        return any(role.name in role_names for role in self.roles)
+
     def add_role(self, role: "Role") -> None:
         if role not in self.roles:
             self.roles.append(role)

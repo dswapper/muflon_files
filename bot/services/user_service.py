@@ -30,7 +30,9 @@ class UserService:
         return user
 
     async def create(self, tg_id: int) -> User:
-        user = User(tg_id=tg_id)
+        user = User(
+            tg_id=tg_id
+        )
         role = await self.get_role_by_name("user")
         user.roles.append(role)
         self.session.add(user)
