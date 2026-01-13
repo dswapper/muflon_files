@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from bot.db import Base
 from bot.models.mixins import ReprMixin
@@ -8,11 +8,27 @@ from bot.models.mixins import ReprMixin
 class Muflon(Base, ReprMixin):
     __tablename__ = "muflons"
 
-    id = sa.Column(sa.Integer(), primary_key=True)
-    user_id = sa.Column(sa.ForeignKey("users.id",
-                                      ondelete="CASCADE", onupdate="CASCADE"),
-                        unique=True,
-                        index=True)
-    user = relationship("User", back_populates="muflon", lazy="selectin")
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    size = sa.Column(sa.Integer(), default=0, server_default="0")
+    user_id: Mapped[int] = mapped_column(
+        sa.ForeignKey(
+            "users.id",
+            ondelete="CASCADE",
+            onupdate="CASCADE",
+        ),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+
+    user: Mapped["User"] = relationship(
+        back_populates="muflon",
+        lazy="selectin",
+    )
+
+    size: Mapped[int] = mapped_column(
+        default=0,
+        server_default="0",
+        nullable=False,
+    )
+
