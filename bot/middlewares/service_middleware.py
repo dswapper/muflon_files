@@ -1,0 +1,24 @@
+from typing import Any, Dict, Callable
+from aiogram import BaseMiddleware
+from sqlalchemy.ext.asyncio import AsyncSession
+from bot.container import create_container
+from bot.services.chat_service import ChatService
+from bot.services.muflon_service import MuflonService
+from bot.services.user_service import UserService
+
+
+class ServicesMiddleware(BaseMiddleware):
+    async def __call__(
+        self,
+        handler: Callable[[Any, Dict[str, Any]], Any],
+        event: Any,
+        data: Dict[str, Any]
+    ) -> Any:
+        container = create_container()
+        container.register(AsyncSession, instance=data["db"])
+
+        data["user_service"]: UserService = container.resolve(UserService)
+        data["muflon_service"]: MuflonService = container.resolve(MuflonService)
+        data["chat_service"]: ChatService = container.resolve(ChatService)
+
+        return await handler(event, data)

@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  bot:
+    build: none
+    image: ${GHCR_IMAGE}:latest
+    volumes: []
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
