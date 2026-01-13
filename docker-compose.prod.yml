@@ -1,11 +1,12 @@
+version: '3.9'
+
 services:
   bot:
-    build: .
-    container_name: muflon_bot
+    build: none
+    image: ${GHCR_IMAGE}:latest
+    volumes: []
     env_file:
       - .env
-    volumes:
-      - .:/app
     depends_on:
       - postgres
       - redis

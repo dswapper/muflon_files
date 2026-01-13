@@ -2,7 +2,8 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
 
 permissions:
@@ -26,10 +27,20 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build -t ${{ vars.GHCR_IMAGE }}:latest .
+          docker build -t ${{ vars.GHCR_IMAGE }} .
           docker tag ${{ vars.GHCR_IMAGE }}:latest ${{ vars.GHCR_IMAGE }}:${{ github.sha }}
           docker push ${{ vars.GHCR_IMAGE }}:latest
           docker push ${{ vars.GHCR_IMAGE }}:${{ github.sha }}
+
+      - name: Sync project to server
+        uses: burnett01/rsync-deployments@v5
+        with:
+          switches: -avz --delete
+          path: ./
+          remote_path: /home/${{ secrets.SSH_USER }}/muflon_bot
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy on server
         uses: appleboy/ssh-action@v1.0.3
@@ -38,11 +49,22 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ${{ vars.GHCR_IMAGE }}:latest
-            docker stop muflon_tg_bot || true
-            docker rm muflon_tg_bot || true
-            docker run -d \
-              --name muflon_tg_bot \
-              --restart unless-stopped \
-              -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} \
-              ${{ vars.GHCR_IMAGE }}:latest
+            cd /home/${{ secrets.SSH_USER }}/muflon_bot
+
+            cat > .env <<EOF
+            BOT_TOKEN=${{ secrets.BOT_TOKEN }}
+            DEBUG=0
+
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+
+            REDIS_HOST=${{ secrets.REDIS_HOST }}
+            REDIS_PORT=${{ secrets.REDIS_PORT }}
+            REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            EOF
+
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
