@@ -2,10 +2,10 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from bot.db import Base
-from bot.models.mixins import ReprMixin
+from bot.models.mixins import ReprMixin, TimestampMixin
 
 
-class Muflon(Base, ReprMixin):
+class Muflon(Base, ReprMixin, TimestampMixin):
     __tablename__ = "muflons"
 
     id: Mapped[int] = mapped_column(primary_key=True)

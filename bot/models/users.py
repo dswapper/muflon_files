@@ -4,7 +4,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from bot.db import Base
-from bot.models.mixins import ReprMixin
+from bot.models.mixins import ReprMixin, TimestampMixin
 
 user_roles = sa.Table(
     "user_roles",
@@ -17,7 +17,7 @@ user_roles = sa.Table(
 )
 
 
-class User(Base, ReprMixin):
+class User(Base, ReprMixin, TimestampMixin):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
