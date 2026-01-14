@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 from bot.config import BOT_TOKEN, DEBUG, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 from bot.db import get_session
-from bot.handlers import muflonize, admin, exception
+from bot.handlers import muflonize, admin, exception, keyboard_callbacks_test
 from watchgod import run_process
 
 from bot.middlewares.chat_middleware import SaveChatMiddleware
@@ -36,6 +36,7 @@ async def main():
     dp.include_router(admin.router)
     dp.include_router(exception.router)
     dp.include_router(muflonize.router)
+    dp.include_router(keyboard_callbacks_test.router)
 
     try:
         logger.info("Bot is starting...")

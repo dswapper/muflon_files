@@ -1,6 +1,9 @@
 import os
 import re
+from pathlib import Path
+
 from loguru import logger
+from dataclasses import dataclass
 
 from environs import Env
 
@@ -35,3 +38,12 @@ SQLALCHEMY_DATABASE_URI = "postgresql+asyncpg://{username}:{password}@{host}:{po
 REDIS_HOST = env("REDIS_HOST", "redis")
 REDIS_PORT = env("REDIS_PORT", "6379")
 REDIS_PASSWORD = env("REDIS_PASSWORD", "redis")
+
+
+ROOT_DIR: Path = Path(__file__).parent.resolve()
+
+
+@dataclass
+class StaticPaths:
+    cool_muflon_path = ROOT_DIR / "static" / "images" / "muflon_cool.png"
+
