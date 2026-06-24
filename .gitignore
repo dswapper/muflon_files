@@ -201,6 +201,10 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+# Agent tasks (локальные ТЗ; в репозитории только README)
+docs/agent-tasks/**
+!docs/agent-tasks/README.md
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
