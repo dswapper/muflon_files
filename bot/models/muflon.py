@@ -32,3 +32,16 @@ class Muflon(Base, ReprMixin, TimestampMixin):
         nullable=False,
     )
 
+    @property
+    def size_human(self) -> str:
+        mm = self.size_mm
+
+        if mm < 10:
+            return f"{mm} мм"
+        elif mm < 1_000:
+            return f"{mm / 10:.1f} см"
+        elif mm < 1_000_000:
+            return f"{mm / 1_000:.2f} м"
+        else:
+            return f"{mm / 1_000_000:.2f} км"
+

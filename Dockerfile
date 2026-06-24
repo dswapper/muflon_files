@@ -1,6 +1,6 @@
 FROM python:3.10-alpine as python-base
 LABEL authors="dswp <dr.swaper@ya.ru>"
-ENV POETRY_VERSION=1.2.0
+ENV POETRY_VERSION=1.8.4
 ENV POETRY_HOME=/opt/poetry
 ENV POETRY_VENV=/opt/poetry-venv
 ENV POETRY_CACHE_DIR=/opt/.cache

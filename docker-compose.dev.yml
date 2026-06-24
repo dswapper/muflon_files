@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: muflon_app_dev
+    env_file:
+      - .env
+    environment:
+      DEBUG: "1"
+    volumes:
+      - .:/workspace:cached
+      - /workspace/.venv
+    working_dir: /workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+    command: sleep infinity

@@ -68,9 +68,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -200,6 +197,10 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Agent tasks (локальные ТЗ; в репозитории только README)
+docs/agent-tasks/**
+!docs/agent-tasks/README.md
 
 # Marimo
 marimo/_static/
