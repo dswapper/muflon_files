@@ -29,6 +29,37 @@ REDIS_PASSWORD=<ваш_пароль>
 docker compose -f docker-compose.prod.yml -f docker-compose.yml up -d
 ```
 
+## Разработка (Dev Container)
+
+Полный стэк для разработки: **postgres**, **redis** и контейнер приложения с Poetry.
+
+### Подготовка
+
+1. Скопируйте `.env.example` → `.env` и заполните `BOT_TOKEN`, пароли БД и Redis.
+2. Убедитесь, что Docker запущен (WSL2: Docker Desktop или `dockerd` в дистрибутиве).
+
+### Dev Container
+
+1. Откройте проект в Cursor / VS Code.
+2. **Dev Containers: Reopen in Container**.
+3. После сборки в терминале контейнера:
+
+```bash
+poetry run python -m bot
+```
+
+Hot-reload включён (`DEBUG=1` в dev compose). Тесты: `poetry run pytest`.
+
+Порты **5432** и **6379** проброшены на хост (pgAdmin, DBeaver, `redis-cli`).
+
+### Остановка dev-стэка
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml down
+```
+
+С удалением данных БД: добавьте флаг `-v`.
+
 ## Старт из fork'а
 
 ### 1. Создайте форк репозитория

@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Bot: Debug",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "bot",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "DEBUG": "0"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

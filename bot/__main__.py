@@ -54,6 +54,8 @@ def start_bot():
 
 if __name__ == "__main__":
     if DEBUG:
-        run_process("bot", start_bot)
+        from bot.__main__ import start_bot as reload_target
+
+        run_process("bot", reload_target)
     else:
         start_bot()

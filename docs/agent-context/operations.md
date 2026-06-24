@@ -57,7 +57,7 @@ docker compose -f docker-compose.yml up -d
 Multi-stage:
 
 1. `python-base` — Python 3.10 alpine
-2. `poetry-base` — Poetry 1.2.0 в venv
+2. `poetry-base` — Poetry 1.8.4 в venv
 3. `muflon_tg_bot` — `poetry install --without dev`, копия кода
 
 **CMD:**
